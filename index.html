@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<!-- saved from url=(0230)file:///Users/jool/Library/Application%20Support/Claude/local-agent-mode-sessions/12973a7a-5d62-4a20-9340-8f30b259914c/60f727fa-7c7a-43a9-9302-b6b3a8774ce9/local_b563d6a2-9d00-4ea8-9e20-ece31de73a83/outputs/journaling-prompts.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Journaling prompts</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(135deg, #f5f0e8 0%, #e8dfd1 100%);
+    min-height: 100vh;
+    margin: 0;
+    padding: 2rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #3a2f25;
+  }
+  .card {
+    background: #fffdf8;
+    border-radius: 18px;
+    padding: 2.5rem;
+    max-width: 640px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(80, 50, 20, 0.12);
+  }
+  h1 {
+    font-size: 1.9rem;
+    margin: 0 0 0.3rem 0;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+  }
+  .subtitle {
+    color: #8a7a6a;
+    margin: 0 0 2rem 0;
+    font-size: 0.95rem;
+  }
+  .filters-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #8a7a6a;
+    margin-bottom: 0.8rem;
+  }
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  .chip {
+    background: #f5f0e8;
+    border: 2px solid transparent;
+    color: #5a4a3a;
+    padding: 0.55rem 1.1rem;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 0.92rem;
+    font-weight: 500;
+    transition: all 0.18s ease;
+    font-family: inherit;
+  }
+  .chip:hover {
+    background: #ebe2d3;
+  }
+  .chip.active {
+    color: #fffdf8;
+  }
+  .chip.active:hover {
+    filter: brightness(1.08);
+  }
+  .generate {
+    width: 100%;
+    background: #c97b4a;
+    color: #fffdf8;
+    border: none;
+    padding: 1rem 1.5rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    font-family: inherit;
+    letter-spacing: 0.3px;
+  }
+  .generate:hover {
+    background: #b56a3d;
+    transform: translateY(-1px);
+  }
+  .generate:active {
+    transform: translateY(0);
+  }
+  .prompt-box {
+    margin-top: 2rem;
+    padding: 1.8rem;
+    background: linear-gradient(135deg, #fdf6ec 0%, #f7ebd9 100%);
+    border-radius: 14px;
+    border-left: 4px solid #c97b4a;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.35s ease;
+  }
+  .prompt-box.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .prompt-category {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #c97b4a;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+  }
+  .prompt-text {
+    font-size: 1.15rem;
+    line-height: 1.55;
+    color: #3a2f25;
+    font-style: italic;
+  }
+  .empty-hint {
+    color: #a89888;
+    font-style: italic;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Journaling prompts</h1>
+    <p class="subtitle">Pick the categories that fit your mood, then display a prompt.</p>
+
+    <div class="filters-label">Categories</div>
+    <div class="filters" id="filters">
+      <button class="chip" data-cat="Reflective" data-color="#6b8cae">🪞 Reflective</button>
+      <button class="chip" data-cat="Imaginative" data-color="#a87bc4">✨ Imaginative</button>
+      <button class="chip" data-cat="Gratitude" data-color="#e0a93b">🙏 Gratitude</button>
+      <button class="chip" data-cat="Challenge" data-color="#d36a4a">🔥 Challenge</button>
+      <button class="chip" data-cat="Memory" data-color="#7ba87b">📷 Memory</button>
+    </div>
+
+    <button class="generate" id="generate">Give me a prompt</button>
+
+    <div class="prompt-box" id="promptBox">
+      <div class="empty-hint">Your prompt will appear here.</div>
+    </div>
+  </div>
+
+<script>
+  const prompts = {
+    Reflective: [
+      "What belief did you hold strongly a year ago that you now see differently?",
+      "Where in your life are you currently growing the most?",
+      "What does a meaningful day look like for you right now?",
+      "Which of your values felt most tested this week?",
+      "What is something you've been avoiding thinking about?",
+      "When did you last feel truly at peace, and what made it possible?",
+      "What kind of person are you slowly becoming?",
+      "Which relationship deserves more of your attention?"
+    ],
+    Imaginative: [
+      "If you could design a small village from scratch, what would be in the center?",
+      "Describe a door you've never opened. Where does it lead?",
+      "Invent a holiday no one has heard of. How is it celebrated?",
+      "You can borrow any skill for 24 hours. What do you do with it?",
+      "Write a letter from your 80-year-old self to you today.",
+      "If your week were a weather forecast, what would it say?",
+      "Describe a museum dedicated entirely to your life.",
+      "You wake up speaking a language you've never learned. What's the first thing you say?"
+    ],
+    Gratitude: [
+      "Name three small things from today that made life a little easier.",
+      "Who in your life have you not thanked enough?",
+      "What's something about your body you appreciate today?",
+      "What ordinary moment from this week deserves a second look?",
+      "Which possession brings you quiet joy, and why?",
+      "Name a kindness, big or small, that someone showed you recently.",
+      "What part of your routine are you grateful for?",
+      "Which person from your past shaped you in ways you're only now noticing?"
+    ],
+    Challenge: [
+      "What is the hardest truth you've had to accept this year?",
+      "Where are you saying yes when you really want to say no?",
+      "What fear has been quietly steering your decisions?",
+      "What conversation are you putting off, and why?",
+      "Where in your life do you feel stuck, and what might be holding you in place?",
+      "What does discomfort have to teach you right now?",
+      "What habit do you keep returning to that doesn't serve you?",
+      "If nothing changed in a year, what would you regret most?"
+    ],
+    Memory: [
+      "Describe a smell that instantly takes you somewhere else.",
+      "Recall a moment from childhood when you felt completely free.",
+      "What's a story your family tells over and over? Why do you think it endures?",
+      "Write about the first home you remember.",
+      "Recall a teacher, coach, or mentor whose words still echo.",
+      "Describe a meal that has stayed with you long after it ended.",
+      "What's a small moment from the past year you want to remember?",
+      "Recall a friendship from a different chapter of your life. What did it teach you?"
+    ]
+  };
+
+  const filtersEl = document.getElementById('filters');
+  const generateBtn = document.getElementById('generate');
+  const promptBox = document.getElementById('promptBox');
+
+  function applyChipColor(chip) {
+    if (chip.classList.contains('active')) {
+      chip.style.background = chip.dataset.color;
+      chip.style.borderColor = chip.dataset.color;
+    } else {
+      chip.style.background = '';
+      chip.style.borderColor = '';
+    }
+  }
+
+  // Initialize colors for chips that start active
+  document.querySelectorAll('.chip').forEach(applyChipColor);
+
+  filtersEl.addEventListener('click', (e) => {
+    if (e.target.classList.contains('chip')) {
+      e.target.classList.toggle('active');
+      applyChipColor(e.target);
+    }
+  });
+
+  generateBtn.addEventListener('click', () => {
+    const activeCats = [...document.querySelectorAll('.chip.active')].map(c => c.dataset.cat);
+    if (activeCats.length === 0) {
+      promptBox.innerHTML = '<div class="empty-hint">Select at least one category to draw a prompt.</div>';
+      promptBox.classList.remove('visible');
+      void promptBox.offsetWidth;
+      promptBox.classList.add('visible');
+      return;
+    }
+    const pool = [];
+    activeCats.forEach(cat => prompts[cat].forEach(p => pool.push({ cat, text: p })));
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+
+    promptBox.classList.remove('visible');
+    setTimeout(() => {
+      promptBox.innerHTML = `
+        <div class="prompt-category">${pick.cat}</div>
+        <div class="prompt-text">${pick.text}</div>
+      `;
+      promptBox.classList.add('visible');
+    }, 150);
+  });
+</script>
+
+
+</body></html>
